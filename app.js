@@ -1,11 +1,33 @@
-var express = require('express');
-var app = express();
-var bodyParser = require('body-parser');
+var express = require('express'),
+    app = express(),
+    bodyParser = require('body-parser'),
+    mongoose = require("mongoose");
+
+mongoose.connect("mongodb://localhost/yelp_camp");
 
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({
     extended: true
 }));
+
+// schema setup
+var campgroundSchema = new mongoose.Schema({
+    name: String,
+    image: String
+});
+
+var Campground = mongoose.model("Campground", campgroundSchema);
+
+Campground.create({
+    name: "Salmon Creek",
+    image: "https://images.pexels.com/photos/7758/pexels-photo.jpg?h=350&auto=compress&cs=tinysrgb/"
+}, function(err, campground) {
+    if (err) {
+        console.log(err);
+    } else {
+        console.log('New campground\n' + campground);
+    }
+});
 
 var campgrounds = [{
     name: "Salmon Creek",
@@ -59,7 +81,9 @@ app.get('/', function(req, res) {
 });
 
 app.get('/campgrounds', function(req, res) {
-    res.render('campgrounds', { campgrounds: campgrounds });
+    res.render('campgrounds', {
+        campgrounds: campgrounds
+    });
 })
 
 app.post("/campgrounds", function(req, res) {
