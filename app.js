@@ -18,6 +18,8 @@ var campgroundSchema = new mongoose.Schema({
 
 var Campground = mongoose.model("Campground", campgroundSchema);
 
+// commenting this create out so we don't recreate this same campground everytime we launch or server
+/*
 Campground.create({
     name: "Salmon Creek",
     image: "https://images.pexels.com/photos/7758/pexels-photo.jpg?h=350&auto=compress&cs=tinysrgb/"
@@ -28,6 +30,7 @@ Campground.create({
         console.log('New campground\n' + campground);
     }
 });
+*/
 
 app.get('/', function(req, res) {
     res.render('landing');
@@ -43,7 +46,9 @@ app.get('/campgrounds', function(req, res) {
         if (err) {
             console.log("error: " + err);
         } else {
-            res.render("campgrounds", { campgrounds: allCampgrounds })
+            res.render("campgrounds", {
+                campgrounds: allCampgrounds
+            })
         }
     })
 })
@@ -57,8 +62,14 @@ app.post("/campgrounds", function(req, res) {
         name: name,
         image: image
     };
-    campgrounds.push(newCampground);
-    res.redirect("/campgrounds");
+    // create new campground and save to DB
+    Campground.create(newCampground, function(err, newlyCreated) {
+        if (err) {
+            console.log("we've hit an error: " + err);
+        } else {
+            res.redirect("/campgrounds");
+        }
+    })
 })
 
 app.get("/campgrounds/new", function(req, res) {
