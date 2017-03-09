@@ -22,7 +22,8 @@ var Campground = mongoose.model("Campground", campgroundSchema);
 /*
 Campground.create({
     name: "Salmon Creek",
-    image: "https://images.pexels.com/photos/7758/pexels-photo.jpg?h=350&auto=compress&cs=tinysrgb/"
+    image: "https://images.pexels.com/photos/7758/pexels-photo.jpg?h=350&auto=compress&cs=tinysrgb/",
+    description: "This is a gorgeous description"
 }, function(err, campground) {
     if (err) {
         console.log(err);
@@ -46,12 +47,12 @@ app.get('/campgrounds', function(req, res) {
         if (err) {
             console.log("error: " + err);
         } else {
-            res.render("campgrounds", {
+            res.render("index", {
                 campgrounds: allCampgrounds
-            })
+            });
         }
-    })
-})
+    });
+});
 
 app.post("/campgrounds", function(req, res) {
     // get data from form and add to campgrounds array
@@ -69,12 +70,16 @@ app.post("/campgrounds", function(req, res) {
         } else {
             res.redirect("/campgrounds");
         }
-    })
-})
+    });
+});
 
 app.get("/campgrounds/new", function(req, res) {
     res.render('new');
-})
+});
+
+app.get("/campgrounds/:id",function(req,res){
+    res.send("show");
+});
 
 app.listen(3000, function() {
     console.log('server running on port 3000');
