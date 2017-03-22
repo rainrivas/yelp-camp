@@ -1,7 +1,10 @@
 var express = require('express'),
     app = express(),
     bodyParser = require('body-parser'),
-    mongoose = require("mongoose");
+    mongoose = require("mongoose"),
+    Campground = require("./models/campground"),
+    Comment = require("./models/campground"),
+    seedDb = require("./seeds");
 
 mongoose.connect("mongodb://localhost/yelp_camp");
 
@@ -10,29 +13,7 @@ app.use(bodyParser.urlencoded({
     extended: true
 }));
 
-// schema setup
-var campgroundSchema = new mongoose.Schema({
-    name: String,
-    image: String,
-    description: String
-});
-
-var Campground = mongoose.model("Campground", campgroundSchema);
-
-// commenting this create out so we don't recreate this same campground everytime we launch or server
-/*
-Campground.create({
-    name: "Salmon Creek",
-    image: "https://images.pexels.com/photos/7758/pexels-photo.jpg?h=350&auto=compress&cs=tinysrgb/",
-    description: "This is a gorgeous description"
-}, function(err, campground) {
-    if (err) {
-        console.log(err);
-    } else {
-        console.log('New campground\n' + campground);
-    }
-});
-*/
+seedDb();
 
 app.get('/', function(req, res) {
     res.render('landing');
@@ -85,7 +66,7 @@ app.get("/campgrounds/new", function(req, res) {
 
 // SHOW ROUTE
 app.get("/campgrounds/:id", function(req, res) {
-    Campground.findById(req.params.id, function(err, foundCampground) {
+    Campground.findById(req.params.id).populate("comments").exec(function(err, foundCampground) {
         if (err) {
             console.log("error: " + err);
         } else {
